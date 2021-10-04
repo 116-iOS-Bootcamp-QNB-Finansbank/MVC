@@ -22,10 +22,12 @@ class MovieListViewController: UIViewController {
     }
     
     var service: ClientNetworkServiceProtocol!
+    var movies: [Result] = []
 
     func getMovies() {
         service.movies { response, error in
             guard let results = response?.feed.results else { return }
+            self.movies = results
             self.movieListView.showMovies(results.map(MovieListPresentation.init))
         }
     }
@@ -33,6 +35,8 @@ class MovieListViewController: UIViewController {
 
 extension MovieListViewController: MovieListViewDelegate {
     func didSelectRow(indexPath: IndexPath) {
-        //TODO:
+        let movie = self.movies[indexPath.row]
+        let viewController = MovieDetailBuilder.build(with: movie)
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
